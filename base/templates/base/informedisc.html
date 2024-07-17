@@ -52,6 +52,23 @@
     {% for info in dict_total %}
     <br>
     <a class="btn btn-primary" href="{% url "base:informe_dcl" val_int %}" role="button">Descargar word</a>
+    <a class="btn btn-primary" href="{% url "base:informepdf_dcl" val_int %}" role="button">Descargar pdf</a>
+    <a class="btn btn-primary" href="{% url "base:informepdfalt_dcl" val_int %}" role="button">Descargar pdf alternativo</a>
+    <form action="{% url "base:enviomail" %}" method="post" class="d-inline">
+        {% csrf_token %}
+        <input type="hidden" name="user_id" value="{{val_int}}">
+        <input type="hidden" name="name" value="{{info.Nombre_y_apellido}}">
+        <button type="submit" class="btn btn-danger shadow px-5 py-2">
+        Enviar email
+        </button>
+        {% if messages %}
+            {% for msg in messages %}
+                <div class="alert alert-{{msg.tags}}" role="alert">
+                    {{msg}}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </form>
     <div class="row">
         <div class="col-3 col-sm-2">Nombre:</div>
         <div class="col-6">{{info.Nombre_y_apellido}}</div>
@@ -203,46 +220,7 @@
     <br>
     <h4 class="text-center">Trabajo en Equipo</h4>
     <h5 class="text-center">Perfil</h5>    
-    <h5 class="text-center">{{info.Perfil_CARE}}</h5>    
-    <div class="row">
-        <div class="col-12 col-sm-12">
-            <table
-                id="table"
-                data-toggle="table"
-                data-locale="es-PY"
-            >
-                <thead>
-                    <th></th>
-                    <th></th>
-                </thead>
-                <tbody>
-                    
-                    <tr>
-                        <td>C</td>
-                        <td>{{info.Conceptualx}}</td>
-                    </tr>
-                    <tr>
-                        <td>E</td>
-                        <td>{{info.Espontaneot}}</td>
-                    </tr>
-                    <tr>
-                        <td>N</td>
-                        <td>{{info.Normativor}}</td>
-                    </tr>
-                    <tr>
-                        <td>M</td>
-                        <td>{{info.Metodicoc}}</td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>{{info.Total_CARE}}</td>
-                    </tr>
-                </tbody>
-                
-            </table>
-        </div>
-        
-    </div>
+    <h5 class="text-center">{{info.Perfil_CARE}}</h5>  
     <div class="row">
         <div class="col-lg-12 text-center">
             <img src="data:image/png;base64,{{ graf_care|safe }}">

@@ -111,8 +111,7 @@ def radar_factory(num_vars, frame='circle'):
 
 
 
-url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRVqjkY-61m5LWel2zI_1bGPG4a5CHOvUwCobn1LqWuACg4" \
-      "-sYtvaQDxqUre33J5graTPsAY_sksLNC/pubhtml "
+url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRiCmRH6o75Q4QPrJWxwxrO6AhJnvClFzfJV7cMn-98EPFMDq3CBZUMC3T-tWYfzcBPcLtYzzQP3tbF/pubhtml"
 
 
 def get_disc_graf(id):
@@ -208,7 +207,9 @@ def get_grafico_polar_liderazgo_word(id):
 def get_grafico_polar_care_word(id):
     care = list_care_for_graf(id)
     label = ['Conceptual', 'Espontáneo', 'Normativo', 'Metódico']
-    graf = grafico_polar_alt(label, care)
+    perfil_graf = perfil_care_for_graf(id)
+    table_care = list_care_for_tabl(id)
+    graf = grafico_polar_alt(label, care, perfil_graf[0], table_care)
     return graf
 
 
@@ -221,12 +222,14 @@ def get_grafico_polar_liderazgo_render(id):
 
 def get_grafico_polar_care_render(id):
     care = list_care_for_graf(id)
+    perfil_graf = perfil_care_for_graf(id)
     label = ['Conceptual', 'Espontáneo', 'Normativo', 'Metódico']
-    graf = grafico_polar(label, care)
+    table_care = list_care_for_tabl(id)
+    graf = grafico_polar(label, care, perfil_graf[0], table_care)
     return graf
 
 
-def grafico_polar_alt(label, values, titulo=" "):
+def grafico_polar_alt(label, values, perfil="", tabla_value =[], titulo=" "):
     data = [label,
         (titulo, [
             values])]
@@ -261,6 +264,19 @@ def grafico_polar_alt(label, values, titulo=" "):
         ax.set_ylim([0,71])
         ax.set_title(title,  position=(0.5, 1.1), ha='center')
         ax.tick_params(axis='x',pad=28, labelsize=13)
+        plt.gcf().text(0.78, 0.94, "Perfil", fontsize=14, verticalalignment = 'center', horizontalalignment = 'center')
+        plt.gcf().text(0.78, 0.88, f"{perfil}", fontsize=14, 
+                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'yellow', 'alpha': 0.5, 'pad': 8})
+        plt.gcf().text(0.18, 0.94, f"C   {tabla_value[0]}", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'oldlace', 'alpha': 0.5, 'pad': 3})
+        plt.gcf().text(0.18, 0.895, f"E   {tabla_value[1]}", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'oldlace', 'alpha': 0.5, 'pad': 3})
+        plt.gcf().text(0.18, 0.85, f"N   {tabla_value[2]}", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'oldlace', 'alpha': 0.5, 'pad': 3})
+        plt.gcf().text(0.18, 0.805, f"M   {tabla_value[3]}", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'oldlace', 'alpha': 0.5, 'pad': 3})
+        plt.gcf().text(0.227, 0.76, f"{sum(tabla_value)}", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'right', bbox = {'facecolor': 'yellow', 'alpha': 0.5, 'pad': 3})
         fig.subplots_adjust(top=0.95, bottom=0.1, left=0.19, right=0.82)
     buffer = BytesIO()
     plt.savefig(buffer, format='png', transparent=True)
@@ -271,7 +287,7 @@ def grafico_polar_alt(label, values, titulo=" "):
     return image_png
 
 
-def grafico_polar(label, values, titulo=" "):
+def grafico_polar(label, values, perfil= "", tabla_value=[], titulo=" "):
     data = [label,
         (titulo, [
             values])]
@@ -308,6 +324,19 @@ def grafico_polar(label, values, titulo=" "):
         ax.set_rgrids([0])
         ax.set_ylim([0,71])
         ax.tick_params(axis='x',pad=20)
+        plt.gcf().text(0.78, 0.94, "Perfil", fontsize=14, verticalalignment = 'center', horizontalalignment = 'center')
+        plt.gcf().text(0.78, 0.88, f"{perfil}", fontsize=14, 
+                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'yellow', 'alpha': 0.5, 'pad': 8})
+        plt.gcf().text(0.18, 0.94, f"C   {tabla_value[0]}", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'oldlace', 'alpha': 0.5, 'pad': 3})
+        plt.gcf().text(0.18, 0.895, f"E   {tabla_value[1]}", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'oldlace', 'alpha': 0.5, 'pad': 3})
+        plt.gcf().text(0.18, 0.85, f"N   {tabla_value[2]}", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'oldlace', 'alpha': 0.5, 'pad': 3})
+        plt.gcf().text(0.18, 0.805, f"M   {tabla_value[3]}", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'oldlace', 'alpha': 0.5, 'pad': 3})
+        plt.gcf().text(0.227, 0.76, f"{sum(tabla_value)}", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'right', bbox = {'facecolor': 'yellow', 'alpha': 0.5, 'pad': 3})
 
     buffer = BytesIO()
     plt.savefig(buffer, format='png', transparent=True)
@@ -565,6 +594,17 @@ def list_lider_for_graf(id):
     return list_lider
 
 
+def perfil_care_for_graf(id):
+    df = carga_care(id)
+    perfil = df['Perfil CARE'].values.tolist()
+    return perfil
+
+def list_care_for_tabl(id):
+    df = carga_care(id)
+    df = df.loc[:,['Conceptualx', 'Espontaneot', 'Normativor', 'Metodicoc']].T
+    list_care = df[0].values.tolist()
+    return list_care
+
 def carga_total_completo(id):
     info_total = info_test_total(id)
     dicen_total = carga_inicial_disc(id)
@@ -609,11 +649,11 @@ def calcular_total_dicen(df):
                  'Total C': df_dicen_mas[df_dicen_mas == 3].count(axis=1),
                  'Total E': df_dicen_mas[df_dicen_mas == 4].count(axis=1),
                  'Total N': df_dicen_mas[df_dicen_mas == 5].count(axis=1),
-                 'Total D-': df_dicen_menos[df_dicen_menos == 2].count(axis=1),
-                 'Total I-': df_dicen_menos[df_dicen_menos == 1].count(axis=1),
-                 'Total C-': df_dicen_menos[df_dicen_menos == 3].count(axis=1),
-                 'Total E-': df_dicen_menos[df_dicen_menos == 4].count(axis=1),
-                 'Total N-': df_dicen_menos[df_dicen_menos == 6].count(axis=1),
+                 'Total D Min': df_dicen_menos[df_dicen_menos == 2].count(axis=1),
+                 'Total I Min': df_dicen_menos[df_dicen_menos == 1].count(axis=1),
+                 'Total C Min': df_dicen_menos[df_dicen_menos == 3].count(axis=1),
+                 'Total E Min': df_dicen_menos[df_dicen_menos == 4].count(axis=1),
+                 'Total N Min': df_dicen_menos[df_dicen_menos == 6].count(axis=1),
                  'Total Dif D': df_dicen_mas[df_dicen_mas == 2].count(axis=1) - df_dicen_menos[df_dicen_menos == 2].count(axis=1),
                  'Total Dif I': df_dicen_mas[df_dicen_mas == 1].count(axis=1) - df_dicen_menos[df_dicen_menos == 1].count(axis=1),
                  'Total Dif C': df_dicen_mas[df_dicen_mas == 3].count(axis=1) - df_dicen_menos[df_dicen_menos == 3].count(axis=1),
@@ -627,11 +667,11 @@ def calcular_total_dicen(df):
     pd_c = df_dicen_total.loc[:, 'Total C'].values.tolist()
     pd_e = df_dicen_total.loc[:, 'Total E'].values.tolist()
     pd_n = df_dicen_total.loc[:, 'Total N'].values.tolist()
-    pd_d_min = df_dicen_total.loc[:, 'Total D-'].values.tolist()
-    pd_i_min = df_dicen_total.loc[:, 'Total I-'].values.tolist()
-    pd_c_min = df_dicen_total.loc[:, 'Total C-'].values.tolist()
-    pd_e_min = df_dicen_total.loc[:, 'Total E-'].values.tolist()
-    pd_n_min = df_dicen_total.loc[:, 'Total N-'].values.tolist()
+    pd_d_min = df_dicen_total.loc[:, 'Total D Min'].values.tolist()
+    pd_i_min = df_dicen_total.loc[:, 'Total I Min'].values.tolist()
+    pd_c_min = df_dicen_total.loc[:, 'Total C Min'].values.tolist()
+    pd_e_min = df_dicen_total.loc[:, 'Total E Min'].values.tolist()
+    pd_n_min = df_dicen_total.loc[:, 'Total N Min'].values.tolist()
     pd_d_dif = df_dicen_total.loc[:, 'Total Dif D'].values.tolist()
     pd_i_dif = df_dicen_total.loc[:, 'Total Dif I'].values.tolist()
     pd_c_dif = df_dicen_total.loc[:, 'Total Dif C'].values.tolist()
@@ -736,6 +776,7 @@ def calcular_total_dicen(df):
 
     }
     df_perfil_disc = pd.DataFrame(perfil_disc)
+    df_perfil_disc.fillna("", inplace=True)
     df_perfil_disc = df_perfil_disc.reset_index(drop=True)
     df_det_disc = df_det_disc.reset_index(drop=True)
     df_dicen_total = df_dicen_total.reset_index(drop=True)

@@ -15,5 +15,8 @@ urlpatterns = [
     path('informedisc/<slug:val>', views.ResultadoDisc.as_view(template_name='base/informedisc.html'), name='informe_disc'),
     path('informediscCare/<slug:val>', views.ViewGraficoCare.as_view(template_name='base/informediscCare.html'), name='grafico_care'),
     path('informediscword/<slug:val>', views.DescargarWord.as_view(), name='informe_dcl'),
+    path('informediscpdf/<slug:val>', views.DescargarPdf.as_view(), name='informepdf_dcl'),
+    path('informediscpdfalt/<slug:val>', views.DescargarPdfAlt.as_view(), name='informepdfalt_dcl'),
+    path('enviomail/', views.enviarMail, name='enviomail'),
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

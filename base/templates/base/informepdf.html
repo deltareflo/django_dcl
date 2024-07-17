@@ -1,0 +1,554 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %} Reporte DCL {{ name }} {% endblock %}
+
+{% block css_page %}
+    
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+    <style type='text/css'>
+        @page {
+            size: {{ pagesize }};
+            margin: 1cm;
+            @frame footer {
+                -pdf-frame-content: footerContent;
+                bottom: 0cm;
+                margin-left: 9cm;
+                margin-right: 9cm;
+                height: 1cm;
+            }
+        }
+        .IMAGE{
+            height: 200px;
+            width: 200px;
+            display: flex;
+            justify-content: center;
+           }
+        body{
+            font-family: 'Roboto', sans-serif;
+        }
+        .nuevo-estilo {
+            margin: 15px 0px;
+            background-color: #EFEDF1;
+            border: 1px solid #E2E3E8;
+            padding: 10px 1px;
+        }
+        .estilotabla {
+            border-color: black;
+            border-width: 2px;
+            border-style: solid;
+            font-weight: bold;
+        }
+        .estilotabla2 {
+            border-color: black;
+            border-width: 1px;
+            border-style: solid;
+        }
+        .content {
+            text-align: center;
+          }
+        .box {
+        width: 200px;
+        display: flex;
+        justify-content: center;
+        }
+        table {
+            table-layout: fixed;
+            width: 100%;
+            border-collapse: collapse;
+            border: 3px solid;
+          }
+        td { border: 1px solid }
+        .contenidoTabla {
+            width: 8;
+        }
+        .tabla {
+            display: flex;
+            flex-direction: column;
+            border: 3px solid;
+        }
+        .fila {
+            display: flex;
+            justify-content: space-around;
+            padding: 0;
+            margin: 0;
+        }
+        .columna {
+            border: 1px solid #ccc;
+            text-align: center;
+            font-weight: bold;
+            flex:0
+        }
+        .grande {
+            flex: 1;
+            border: 1px solid #ccc;
+            padding: 5px;
+            text-align: center;
+        }
+        .caracter {
+            background-color: #ff7e67;
+        }
+        .analisis {
+            background-color: #f8da5b; 
+        }
+        .realizacion {
+            background-color: #42b883; 
+        }
+        .interaccion {
+            background-color: #5dacbd;
+        }
+        .detalle {
+            color: #393736;
+            font-size: 90%;
+        }
+        
+
+          
+    </style>
+{% endblock %}
+{% block navigation %}{% endblock %}
+{% block header %}{% endblock %}
+{% block body %}
+<div class="container">
+    
+    <h1 class="text-center content">Informe DCL</h1>
+    <h3 class="text-center content">Datos Personales</h3>
+    {% for info in dict_total %}
+    <br>
+    <div class="row">
+        <div class="col-3 col-sm-2">Nombre:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<span class="detalle">{{info.Nombre_y_apellido}}</span></div>
+    </div>
+    <div class="row">
+        <div class="col-3 col-sm-2">Fecha de Nacimiento: &emsp;<span class="detalle">{{info.Fecha_de_nacimiento}}</span></div>
+    </div>
+    <div class="row">
+        <div class="col-3 col-sm-2">Nacionalidad:&emsp;&emsp;&emsp;&emsp;&ensp;&nbsp;<span class="detalle">{{info.Nacionalidad}}</span></div>
+       
+    </div>
+    <div class="row">
+        <div class="col-3 col-sm-2">Estado civil:&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;<span class="detalle">{{info.Estado_civil}}</span></div>
+        
+    </div>
+    <h3 class="text-center content">Resultados</h3>
+    <h3 class="text-center content" style="font-weight: bold;">Perfil de Personalidad</h3>
+    <h4 class="text-center content detalle">{{info.Patron_diferencia}}</h4>
+    <div class="content">
+        <img style="width: 200px; text-align: center" src="data:image/png;base64,{{ graf_disc|safe }}">
+    </div>
+    <div class="row content" style="text-align:center">
+        
+            <table 
+            >
+                <thead>
+                    <th></th>
+                    <th>Dominante</th>
+                    <th>Influyente</th>
+                    <th>Estable</th>
+                    <th>Concienzudo</th>
+                </thead>
+                
+                <tbody>
+                    
+                    <tr>
+                        <td>Desc 1</td>
+                        <td class="detalle">{{info.Dominante1}}</td>
+                        <td class="detalle">{{info.Influyente1}}</td>
+                        <td class="detalle">{{info.Estable1}}</td>
+                        <td class="detalle">{{info.Concienzudo1}}</td>
+                    </tr>
+                    <tr>
+                        <td>Desc 2</td>
+                        <td class="detalle">{{info.Dominante2}}</td>
+                        <td class="detalle">{{info.Influyente2}}</td>
+                        <td class="detalle">{{info.Estable2}}</td>
+                        <td class="detalle">{{info.Concienzudo2}}</td>
+                    </tr>
+                    <tr>
+                        <td>Desc 3</td>
+                        <td class="detalle">{{info.Dominante3}}</td>
+                        <td class="detalle">{{info.Influyente3}}</td>
+                        <td class="detalle">{{info.Estable3}}</td>
+                        <td class="detalle">{{info.Concienzudo3}}</td>
+                    </tr>
+                    <tr>
+                        <td>PC</td>
+                        <td class="detalle">{{info.Dominante}}</td>
+                        <td class="detalle">{{info.Influyente}}</td>
+                        <td class="detalle">{{info.Estable}}</td>
+                        <td class="detalle">{{info.Concienzudo}}</td>
+                    </tr>
+                </tbody>
+                
+            </table>
+        
+    </div>
+    <h4 class="">Fortalezas</h4>
+    <div class="row">
+        <div class="col-5 col-sm-3">Emociones: <span class="detalle">{{info.Emociones}}</span></div>
+    </div>
+    <div class="row">
+        <div class="col-5 col-sm-3">Meta: <span class="detalle">{{info.Meta}}</span></div>
+    </div>
+    <div class="row">
+        <div class="col-5 col-sm-3">Juzga a los demás por: <span class="detalle">{{info.Juzga}}</span></div>
+    </div>
+    <div class="row">
+        <div class="col-5 col-sm-3">Influye en los demás mediante: <span class="detalle">{{info.Influye}}</span></div>
+    </div>
+    <div class="row">
+        <div class="col-5 col-sm-3">Su valor para la organización: <span class="detalle">{{info.Valor_para_la_organización}}</span></div>
+        
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-12 col-sm-12 detalle">{{info.Añadido}}</div>
+    </div>
+    <br>
+    <h4 class="">Debilidades</h4>
+    <div class="row">
+        <div class="col-5 col-sm-3">Abusa: <span class="detalle">{{info.Abusa}}</span></div>
+    </div>
+    <div class="row">
+        <div class="col-5 col-sm-3">Bajo presión: <span class="detalle">{{info.Bajo_presión}}</span></div>
+    </div>
+    <div class="row">
+        <div class="col-5 col-sm-3">Teme: <span class="detalle">{{info.Teme}}</span></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-12 col-sm-12 detalle">{{info.Observaciones}}</div>
+    </div>
+    <br>
+    <h4 class="">Sugerencias</h4>
+    <br>
+    <div class="row">
+        <div class="col-12 col-sm-12 detalle">{{info.Sugerencias}}</div>
+    </div>
+    <br>
+    <br>
+    <div class="row">
+        <div class="col-12 col-sm-12 detalle">{{info.Enfasis}}</div>
+    </div>
+    <br>
+    <table
+        id="table"
+        data-toggle="table"
+        data-locale="es-PY"
+        border="1"
+    >
+        <thead>
+            <th>Descripción</th>
+            <th>Plan de acción</th>
+        </thead>
+        
+        <tbody>
+            
+            <tr>
+                <th>Las tendencias de esta persona incluyen:</th>
+                <th>Esta persona necesita que otros</th>
+            </tr>
+            <tr>
+                <td class="detalle">{{info.Tendencias}}</td>
+                <td class="detalle">{{info.Necesidades_de_otros}}</td>
+            </tr>
+            <tr>
+                <th>Esta persona desea un ambiente que incluya:</th>
+                <th>Para ser más eficaz, esta persona necesita:</th>
+            </tr>
+            <tr>
+                <td class="detalle">{{info.Deseos}}</td>
+                <td class="detalle">{{info.Aumento_de_eficacia}}</td>
+            </tr>
+        </tbody>
+        
+    </table>
+    <br>
+    <br>
+    <h4 class="text-center content">Trabajo en Equipo</h4>
+    
+    <div class="content">
+        <div class="col-lg-12 text-center">
+            <img style="width: 400px; text-align: center" src="data:image/png;base64,{{ graf_care|safe }}">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <h5>ENFOQUE {{info.Enfoque_CARE}}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 detalle">
+            {{info.Descripcion_Enfoque}}
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-lg-12">
+            <h5>{{info.Perfil_CARE}}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 detalle">
+            {{info.Descripcion_Perfil}}
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-lg-12">
+        <h5>ROL DEL {{info.Rol_Desc}}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+        <h5>ENFOQUE: {{info.Enfoque_CARE}}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 col-sm-2">
+            <div class="titulo">Descripción: <span class="detalle">{{info.Descripción_Rol}}</span></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 col-sm-2">
+            <div class="titulo">Obtiene satisfacción: <span class="detalle">{{info.Satisfacción_Rol}}</span></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 col-sm-2">
+            <div class="titulo">Contribución: <span class="detalle">{{info.Contribución_Rol}}</span></div>
+        </div>
+        </div>
+    <div class="row">
+        <div class="col-2 col-sm-2">
+            <div class="titulo">Debilidades: <span class="detalle">{{info.Debilidades_Rol}}</span></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 col-sm-2">
+            <div class="titulo">Instinto: <span class="detalle">{{info.Instinto_Rol}}</span></div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <h3 class="text-center content">Liderazgo</h3>
+    <div class="content">
+        <div class="col-lg-12 text-center">
+            <img style="width: 400px" src="data:image/png;base64,{{ graf_lider|safe }}">
+        </div>
+    </div>
+    <div class="tabla">
+        <div class="fila">
+          <div class="grande caracter">Carácter</div>
+          <div class="columna caracter">{{info.Carácter}}</div>
+          <div class="grande analisis">Análisis</div>
+          <div class="columna analisis">{{info.Análisis}}</div>
+          <div class="grande realizacion">Realización</div>
+          <div class="columna realizacion">{{info.Realización}}</div>
+          <div class="grande interaccion">Interacción</div>
+          <div class="columna interaccion">{{info.Interacción}}</div>
+        </div>
+        <div class="fila">
+            <div class="grande caracter">Entusiasmo</div>
+            <div class="columna caracter">{{info.Entusiasmo}}</div>
+            <div class="grande analisis">Fortaleza</div>
+            <div class="columna analisis">{{info.Fortaleza}}</div>
+            <div class="grande realizacion">Ejecución</div>
+            <div class="columna realizacion">{{info.Ejecución}}</div>
+            <div class="grande interaccion">Colaboración</div>
+            <div class="columna interaccion">{{info.Colaboración}}</div>
+        </div>
+        <div class="fila">
+            <div class="grande caracter">Integridad</div>
+            <div class="columna caracter">{{info.Integridad}}</div>
+            <div class="grande analisis">Percepción</div>
+            <div class="columna analisis">{{info.Percepción}}</div>
+            <div class="grande realizacion">Audacia</div>
+            <div class="columna realizacion">{{info.Audacia}}</div>
+            <div class="grande interaccion">Inspiración</div>
+            <div class="columna interaccion">{{info.Inspiración}}</div>
+        </div>
+        <div class="fila">
+            <div class="grande caracter">Autorenovación</div>
+            <div class="columna caracter">{{info.Autorenovacion}}</div>
+            <div class="grande analisis">Criterio</div>
+            <div class="columna analisis">{{info.Criterio}}</div>
+            <div class="grande realizacion">Construcción de un Equipo</div>
+            <div class="columna realizacion">{{info.Construcción_de_un_equipo}}</div>
+            <div class="grande interaccion">Servir a los demás</div>
+            <div class="columna interaccion">{{info.Servir_a_los_demás}}</div>
+        </div>
+        <!-- Otras filas aquí -->
+    </div>
+    
+    <br>
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <h5>ENFOQUE EN {{info.Nombre_Enfoque_liderazgo}} </h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 detalle">
+            {{info.Desc_Gral_Enfoque_liderazgo}}
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <h5>Enfoque en {{info.Nombre_Enfoque_liderazgo}}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 detalle">
+            {{info.Desc_Part_Enfoque_liderazgo}}
+        </div>
+    </div>
+    {% if info.Criterio_Enfoque_2 == "Si" %}
+    <br>
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <h5>Enfoque en {{info.Nombre_Enfoque_liderazgo2}}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 detalle">
+            {{info.Desc_Gral_Enfoque_liderazgo2}}
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <h5>Enfoque en {{info.Nombre_Enfoque_liderazgo2}}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 detalle">
+            {{info.Desc_Part_Enfoque_liderazgo2}}
+        </div>
+    </div>
+    {% endif %}
+    <br>
+    {% if info.Criterio_mayor_Liderazgo_1 == "Si" %}
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <h5>{{info.Max_Liderazgo_1}}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <ul>
+                <li>{{info.Desc_Dimension_alta_liderazgo}}</li>
+            </ul>
+            Alto Énfasis: <span class="detalle">{{info.Desc_alto_enfasis_liderazgo}}</span>
+        </div>
+    </div>
+    {% endif %}
+    {% if info.Criterio_mayor_Liderazgo_2 == "Si" %}
+    <br>
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <h5>{{info.Max_Liderazgo_2}}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <ul>
+                <li>{{info.Desc_Dimension_alta_liderazgo2}}</li>
+            </ul>
+            Alto Énfasis: <span class="detalle">{{info.Desc_alto_enfasis_liderazgo2}}</span>
+        </div>
+    </div>
+    {% endif %}
+    {% if info.Criterio_mayor_Liderazgo_3 == "Si" %}
+    <br>
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <h5>{{info.Max_Liderazgo_3}}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <ul>
+                <li>{{info.Desc_Dimension_alta_liderazgo3}}</li>
+            </ul>
+            Alto Énfasis: <span class="detalle">{{info.Desc_alto_enfasis_liderazgo3}}</span>
+        </div>
+    </div>
+    {% endif %}
+    <br>
+    <div class="row">
+        <div class="col-2 col-sm-2">
+            <div class="titulo">Razón por la cual las personas lo siguen:</div>
+        </div>
+        <div class="col-10 col-sm-10">
+            <div class="detalle">{{info.Razon_de_seguir_liderazgo}}</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 col-sm-2">
+            <div class="titulo">Quienes lo seguirán:</div>
+        </div>
+        <div class="col-10 col-sm-10">
+            <div class="detalle">{{info.Seguido_por_liderazgo}}</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 col-sm-2">
+            <div class="titulo">Cuando guiar:</div>
+        </div>
+        <div class="col-10 col-sm-10">
+            <div class="detalle">{{info.Cuando_guiar_liderazgo}}</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 col-sm-2">
+            <div class="titulo">De qué cuidarse:</div>
+        </div>
+        <div class="col-10 col-sm-10">
+            <div class="detalle">{{info.Cuidados_liderazgo}}</div>
+        </div>
+    </div>
+    {% if info.Criterio_menor_Liderazgo_1 == "Si" %}
+    <br>
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            {{info.Min_Liderazgo_1}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <ul>
+                <li>{{info.Desc_Dimension_baja_liderazgo}}</li>
+            </ul>
+            Bajo Énfasis: <span class="detalle">{{info.Desc_bajo_enfasis_liderazgo}}</span>
+        </div>
+    </div>
+    {% endif %}
+    {% if info.Criterio_menor_Liderazgo_2 == "Si" %}
+    <br>
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            {{info.Min_Liderazgo_2}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <ul>
+                <li>{{info.Desc_Dimension_baja_liderazgo2}}</li>
+            </ul>
+            Bajo Énfasis: <span class="detalle">{{info.Desc_bajo_enfasis_liderazgo2}}</span>
+        </div>
+    </div>
+    {% endif %}
+
+    {% endfor %}
+    
+</div>
+{% endblock %}
+{% block js_page %} 
+{% endblock %}
