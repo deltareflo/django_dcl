@@ -52,9 +52,8 @@
     {% for info in dict_total %}
     <br>
     <a class="btn btn-primary" href="{% url "base:informe_dcl" val_int %}" role="button">Descargar word</a>
-    <a class="btn btn-primary" href="{% url "base:informepdf_dcl" val_int %}" role="button">Descargar pdf</a>
-    <a class="btn btn-primary" href="{% url "base:informepdfalt_dcl" val_int %}" role="button">Descargar pdf alternativo</a>
-    <form action="{% url "base:enviomail" %}" method="post" class="d-inline">
+    <a class="btn btn-primary" href="{% url "base:informepdfalt_dcl" val_int %}" role="button">Descargar pdf</a>
+    {% comment %} <form action="{% url "base:enviomail" %}" method="post" class="d-inline">
         {% csrf_token %}
         <input type="hidden" name="user_id" value="{{val_int}}">
         <input type="hidden" name="name" value="{{info.Nombre_y_apellido}}">
@@ -68,7 +67,7 @@
                 </div>
             {% endfor %}
         {% endif %}
-    </form>
+    </form> {% endcomment %}
     <div class="row">
         <div class="col-3 col-sm-2">Nombre:</div>
         <div class="col-6">{{info.Nombre_y_apellido}}</div>
