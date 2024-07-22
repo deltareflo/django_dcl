@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin,\
 from django.views import generic
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.contrib import messages
-from . import GetDataframe, html2pdf
+from . import GetDataframe
 import imgkit
 from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Mm
@@ -108,7 +108,7 @@ class DescargarWord(generic.TemplateView):
         doc.save(response)
         return response
     
-    
+
 class DescargarPdfAlt(generic.TemplateView):
     def get(self, request, val):
         val_int = int(val)
