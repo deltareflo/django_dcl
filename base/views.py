@@ -108,26 +108,7 @@ class DescargarWord(generic.TemplateView):
         doc.save(response)
         return response
     
-class DescargarPdf(generic.TemplateView):
-    def get(self, request, val):
-        val_int = int(val)
-        info_test = GetDataframe.info_test_total(val_int)
-        name = info_test['Nombre y apellido'].values.tolist()
-        #Dict info total DCL
-        total = GetDataframe.carga_total_completo(val_int)
-        total.columns = total.columns.str.replace(" ", "_")
-        dict_total = total.to_dict('records')
-        dict_total_fin = dict_total[0]
-        graf_disc = GetDataframe.get_disc_graf(val_int)
-        graf_care = GetDataframe.get_grafico_polar_care_render(val_int)
-        graf_lider = GetDataframe.get_grafico_polar_liderazgo_render(val_int)
-        return html2pdf.render_to_pdf('base/informepdf.html', {'pagesize':'A4',
-                                                               'dict_total':dict_total,
-                                                               'graf_disc':graf_disc,
-                                                               'graf_care':graf_care,
-                                                               'graf_lider':graf_lider})
     
-
 class DescargarPdfAlt(generic.TemplateView):
     def get(self, request, val):
         val_int = int(val)
