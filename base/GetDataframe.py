@@ -111,7 +111,9 @@ def radar_factory(num_vars, frame='circle'):
 
 
 
-url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRiCmRH6o75Q4QPrJWxwxrO6AhJnvClFzfJV7cMn-98EPFMDq3CBZUMC3T-tWYfzcBPcLtYzzQP3tbF/pubhtml"
+#url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRiCmRH6o75Q4QPrJWxwxrO6AhJnvClFzfJV7cMn-98EPFMDq3CBZUMC3T-tWYfzcBPcLtYzzQP3tbF/pubhtml"
+url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRVqjkY-61m5LWel2zI_1bGPG4a5CHOvUwCobn1LqWuACg4" \
+      "-sYtvaQDxqUre33J5graTPsAY_sksLNC/pubhtml "
 
 
 def get_disc_graf(id):
@@ -240,16 +242,16 @@ def grafico_polar_alt(label, values, perfil="", tabla_value =[], titulo=" "):
     spoke_labels = data.pop(0)
     title, case_data = data[0]
 
-    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(projection='radar'))
-    fig.subplots_adjust(top=0.95, bottom=0.1, left=0.15, right=0.82)
-
-    for d in case_data:
-        line = ax.plot(theta, d)
-        ax.fill(theta, d,  alpha=0.25)
-        ax.scatter(theta, d, color='crimson', s=10)
-    ax.set_varlabels(spoke_labels)
-    ax.tick_params(axis='x',pad=20)
+    
     if len(label) > 4:
+        fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(projection='radar'), edgecolor='k', linewidth=3)
+
+        for d in case_data:
+            line = ax.plot(theta, d, color='cyan')
+            ax.fill(theta, d, facecolor='cyan',  alpha=0.25)
+            ax.scatter(theta, d, color='crimson', s=10)
+        ax.set_varlabels(spoke_labels)
+        ax.tick_params(axis='x',pad=20)
         ax.set_rgrids([0, 10, 20])
         ax.set_ylim([0,25])
         ax.tick_params(axis='both',pad=31, labelsize=13, direction='out')
@@ -260,26 +262,42 @@ def grafico_polar_alt(label, values, perfil="", tabla_value =[], titulo=" "):
         plt.gcf().text(0.82, 0.76, "Interacción", rotation = -40, fontsize=14)
         fig.subplots_adjust(top=0.95, bottom=0.1, left=0.18, right=0.72)
     else:
+        fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(projection='radar'))
+        fig.subplots_adjust(top=0.95, bottom=0.1, left=0.15, right=0.82)
+
+        for d in case_data:
+            line = ax.plot(theta, d, color='cyan')
+            ax.fill(theta, d, facecolor='cyan',  alpha=0.25)
+            ax.scatter(theta, d, color='crimson', s=10)
+        ax.set_varlabels(spoke_labels)
+        ax.tick_params(axis='x',pad=20)
         ax.set_rgrids([0])
         ax.set_ylim([0,71])
         ax.set_title(title,  position=(0.5, 1.1), ha='center')
         ax.tick_params(axis='x',pad=28, labelsize=13)
-        plt.gcf().text(0.78, 0.94, "Perfil", fontsize=14, verticalalignment = 'center', horizontalalignment = 'center')
-        plt.gcf().text(0.78, 0.88, f"{perfil}", fontsize=14, 
-                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'yellow', 'alpha': 0.5, 'pad': 8})
+        plt.gcf().text(0.78, 0.94, "Perfil", fontsize=16, verticalalignment = 'center', horizontalalignment = 'center')
+        plt.gcf().text(0.78, 0.88, f"{perfil}", fontsize=17, 
+                       verticalalignment = 'center', horizontalalignment = 'center', weight='bold', bbox = {'facecolor': 'yellow', 'alpha': 0.5, 'pad': 8})
         plt.gcf().text(0.18, 0.94, f"C   {tabla_value[0]}", fontsize=13, 
-                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'oldlace', 'alpha': 0.5, 'pad': 3})
+                       verticalalignment = 'center', horizontalalignment = 'center')
+        plt.gcf().text(0.18, 0.935, f"______", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'center')
         plt.gcf().text(0.18, 0.895, f"E   {tabla_value[1]}", fontsize=13, 
-                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'oldlace', 'alpha': 0.5, 'pad': 3})
+                       verticalalignment = 'center', horizontalalignment = 'center')
+        plt.gcf().text(0.18, 0.89, f"______", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'center')
         plt.gcf().text(0.18, 0.85, f"N   {tabla_value[2]}", fontsize=13, 
-                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'oldlace', 'alpha': 0.5, 'pad': 3})
+                       verticalalignment = 'center', horizontalalignment = 'center')
+        plt.gcf().text(0.18, 0.845, f"______", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'center')
         plt.gcf().text(0.18, 0.805, f"M   {tabla_value[3]}", fontsize=13, 
-                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'oldlace', 'alpha': 0.5, 'pad': 3})
+                       verticalalignment = 'center', horizontalalignment = 'center')
+        plt.gcf().text(0.18, 0.80, f"______", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'center')
         plt.gcf().text(0.227, 0.76, f"{sum(tabla_value)}", fontsize=13, 
                        verticalalignment = 'center', horizontalalignment = 'right', bbox = {'facecolor': 'yellow', 'alpha': 0.5, 'pad': 3})
-        fig.subplots_adjust(top=0.95, bottom=0.1, left=0.19, right=0.82)
     buffer = BytesIO()
-    plt.savefig(buffer, format='png', transparent=True)
+    plt.savefig(buffer, format='png', transparent=True, edgecolor='k')
     buffer.seek(0)
     image_png = buffer.getvalue()
     buffer.close()
@@ -298,21 +316,22 @@ def grafico_polar(label, values, perfil= "", tabla_value=[], titulo=" "):
     spoke_labels = data.pop(0)
     title, case_data = data[0]
 
-    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(projection='radar'))
-    fig.subplots_adjust(top=0.95, bottom=0.1, left=0.15, right=0.82)
-
     
-    ax.set_title(title,  position=(0.5, 1.1), ha='center')
-
-    for d in case_data:
-        line = ax.plot(theta, d)
-        ax.fill(theta, d,  alpha=0.25)
-        ax.scatter(theta, d, color='crimson', s=10)
-    ax.set_varlabels(spoke_labels)
     
     
     
     if len(label) > 4:
+        fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(projection='radar'), edgecolor='k', linewidth=2)
+        fig.subplots_adjust(top=0.95, bottom=0.1, left=0.15, right=0.82)
+
+        
+        ax.set_title(title,  position=(0.5, 1.1), ha='center')
+
+        for d in case_data:
+            line = ax.plot(theta, d, color='cyan')
+            ax.fill(theta, d, facecolor='cyan',  alpha=0.25)
+            ax.scatter(theta, d, color='crimson', s=10)
+        ax.set_varlabels(spoke_labels)
         ax.set_rgrids([0, 10, 20])
         ax.set_ylim([0,25])
         ax.tick_params(axis='x',pad=24)
@@ -321,20 +340,39 @@ def grafico_polar(label, values, perfil= "", tabla_value=[], titulo=" "):
         plt.gcf().text(0.08, 0.85, "Caracter", rotation = 30, fontsize=14)
         plt.gcf().text(0.82, 0.76, "Interacción", rotation = -40, fontsize=14)
     else:
+        fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(projection='radar'))
+        fig.subplots_adjust(top=0.95, bottom=0.1, left=0.15, right=0.82)
+
+        
+        ax.set_title(title,  position=(0.5, 1.1), ha='center')
+
+        for d in case_data:
+            line = ax.plot(theta, d, color='cyan')
+            ax.fill(theta, d, facecolor='cyan',  alpha=0.25)
+            ax.scatter(theta, d, color='crimson', s=10)
+        ax.set_varlabels(spoke_labels)
         ax.set_rgrids([0])
         ax.set_ylim([0,71])
         ax.tick_params(axis='x',pad=20)
-        plt.gcf().text(0.78, 0.94, "Perfil", fontsize=14, verticalalignment = 'center', horizontalalignment = 'center')
-        plt.gcf().text(0.78, 0.88, f"{perfil}", fontsize=14, 
-                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'yellow', 'alpha': 0.5, 'pad': 8})
+        plt.gcf().text(0.78, 0.94, "Perfil", fontsize=16, verticalalignment = 'center', horizontalalignment = 'center')
+        plt.gcf().text(0.78, 0.88, f"{perfil}", fontsize=17, 
+                       verticalalignment = 'center', horizontalalignment = 'center', weight='bold', bbox = {'facecolor': 'yellow', 'alpha': 0.5, 'pad': 8})
         plt.gcf().text(0.18, 0.94, f"C   {tabla_value[0]}", fontsize=13, 
-                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'oldlace', 'alpha': 0.5, 'pad': 3})
+                       verticalalignment = 'center', horizontalalignment = 'center')
+        plt.gcf().text(0.18, 0.935, f"______", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'center')
         plt.gcf().text(0.18, 0.895, f"E   {tabla_value[1]}", fontsize=13, 
-                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'oldlace', 'alpha': 0.5, 'pad': 3})
+                       verticalalignment = 'center', horizontalalignment = 'center')
+        plt.gcf().text(0.18, 0.89, f"______", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'center')
         plt.gcf().text(0.18, 0.85, f"N   {tabla_value[2]}", fontsize=13, 
-                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'oldlace', 'alpha': 0.5, 'pad': 3})
+                       verticalalignment = 'center', horizontalalignment = 'center')
+        plt.gcf().text(0.18, 0.845, f"______", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'center')
         plt.gcf().text(0.18, 0.805, f"M   {tabla_value[3]}", fontsize=13, 
-                       verticalalignment = 'center', horizontalalignment = 'center', bbox = {'facecolor': 'oldlace', 'alpha': 0.5, 'pad': 3})
+                       verticalalignment = 'center', horizontalalignment = 'center')
+        plt.gcf().text(0.18, 0.80, f"______", fontsize=13, 
+                       verticalalignment = 'center', horizontalalignment = 'center')
         plt.gcf().text(0.227, 0.76, f"{sum(tabla_value)}", fontsize=13, 
                        verticalalignment = 'center', horizontalalignment = 'right', bbox = {'facecolor': 'yellow', 'alpha': 0.5, 'pad': 3})
 
@@ -531,7 +569,8 @@ def df_info_inicial():
     df_temp = df_disc.iloc[1:, -3]
     df_info.iloc[:, 0] = df_info.iloc[:, 0].map(int)
     df_info.rename(columns={'1': 'Id'}, inplace=True)
-    df_info['Número de Cédula'] = df_info['Número de Cédula'].astype(int)
+    df_info['Número de Cédula'] = pd.to_numeric(df_info['Número de Cédula'], errors="coerce")
+    df_info['Número de Cédula'] = df_info['Número de Cédula'].fillna(0).astype(int)
     df_info['Edad'] = df_info['Edad'].astype(int)
     df_info_total = pd.concat([df_info, df_temp], axis=1)
     #df_info = df_info.reset_index(drop=True)

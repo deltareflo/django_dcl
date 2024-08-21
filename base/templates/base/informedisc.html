@@ -51,8 +51,8 @@
     <h3 class="text-center">Datos Personales</h3>
     {% for info in dict_total %}
     <br>
-    <a class="btn btn-primary" href="{% url "base:informe_dcl" val_int %}" role="button">Descargar word</a>
-    <a class="btn btn-primary" href="{% url "base:informepdfalt_dcl" val_int %}" role="button">Descargar pdf</a>
+    <a class="btn btn-primary" href="{% url "base:informe_dcl"  val_int %}" role="button">Descargar word</a>
+    <a class="btn btn-primary" href="{% url "base:informepdfalt_dcl" nombre val_int %}" role="button">Descargar pdf</a>
     {% comment %} <form action="{% url "base:enviomail" %}" method="post" class="d-inline">
         {% csrf_token %}
         <input type="hidden" name="user_id" value="{{val_int}}">
