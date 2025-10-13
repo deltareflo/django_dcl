@@ -122,7 +122,7 @@
     {% for info in dict_total %}
     <br>
     <div class="row">
-        <div class="col-3 col-sm-2">Nombre:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<span class="detalle">{{info.Nombre_y_apellido}}</span></div>
+        <div class="col-3 col-sm-2">Nombre:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<span class="detalle">{{info.Nombre_y_Apellido}}</span></div>
     </div>
     <div class="row">
         <div class="col-3 col-sm-2">Fecha de Nacimiento: &emsp;<span class="detalle">{{info.Fecha_de_nacimiento}}</span></div>
@@ -369,7 +369,7 @@
             <div class="grande analisis">Percepción</div>
             <div class="columna analisis">{{info.Percepción}}</div>
             <div class="grande realizacion">Audacia</div>
-            <div class="columna realizacion">{{info.Audacia}}</div>
+            <div class="columna realizacion">{{info.Audacia|stringformat:"02d"}}</div>
             <div class="grande interaccion">Inspiración</div>
             <div class="columna interaccion">{{info.Inspiración}}</div>
         </div>

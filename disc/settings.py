@@ -25,13 +25,13 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'RENDER' not in os.environ
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
-CSRF_TRUSTED_ORIGINS = ['https://*.djangodcl-production.up.railway.app','https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://*.djangodcl-production.up.railway.app','https://*.127.0.0.1', 'https://*.ngrok-free.app']
 # Application definition
 
 INSTALLED_APPS = [
@@ -147,5 +147,6 @@ EMAIL_HOST_USER = 'deltadare@gmail.com'
 EMAIL_HOST_PASSWORD = os.getenv("MAIL_PASSWORD")
 EMAIL_USE_TLS = True
 
+LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'

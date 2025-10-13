@@ -1,0 +1,10 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <br><br>
+    <h1>Error 404</h1>
+    <p>Lo sentimos, la página que estás buscando no existe.</p>
+    <a href="{% url 'base:inicio' %}" class="btn btn-primary">Volver al inicio</a>
+</div>
+{% endblock %}

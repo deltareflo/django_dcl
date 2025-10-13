@@ -15,6 +15,9 @@ from io import BytesIO
 import base64
 import pathlib
 import os
+import requests
+from bs4 import BeautifulSoup
+from .models import DatosPersonales, Disc, TrabajoEquipo, Liderazgo
 
 mpl.use('agg')
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -110,21 +113,24 @@ def radar_factory(num_vars, frame='circle'):
     return theta
 
 
-
-#url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRiCmRH6o75Q4QPrJWxwxrO6AhJnvClFzfJV7cMn-98EPFMDq3CBZUMC3T-tWYfzcBPcLtYzzQP3tbF/pubhtml"
-url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRVqjkY-61m5LWel2zI_1bGPG4a5CHOvUwCobn1LqWuACg4" \
+#url1 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRiCmRH6o75Q4QPrJWxwxrO6AhJnvClFzfJV7cMn-98EPFMDq3CBZUMC3T-tWYfzcBPcLtYzzQP3tbF/pubhtml"
+url1 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRVqjkY-61m5LWel2zI_1bGPG4a5CHOvUwCobn1LqWuACg4" \
       "-sYtvaQDxqUre33J5graTPsAY_sksLNC/pubhtml "
+url3 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRiCmRH6o75Q4QPrJWxwxrO6AhJnvClFzfJV7cMn-98EPFMDq3CBZUMC3T-tWYfzcBPcLtYzzQP3tbF/pub?output=xlsx"
+    
+url3 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQGGCmVGv0ba4dQoSqad5JA3VfONXU9p4ZPsezmRXm4hZC48VhaZ9SE9v836fVe_T-g_UnGH7qcEqvA/pub?output=xlsx"
 
+url4 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQGGCmVGv0ba4dQoSqad5JA3VfONXU9p4ZPsezmRXm4hZC48VhaZ9SE9v836fVe_T-g_UnGH7qcEqvA/pub?output=csv"
 
-def get_disc_graf(id):
-    disc = list_disc_for_graf(id)
+def get_disc_graf(id, df_disc):
+    disc = list_disc_for_graf(id, df_disc)
     label = ['Dominante', 'Influyente', 'Concienzudo', 'Estable']
     graf = grafico_bar_alt(label, disc, "Perfil")
     return graf
 
 
-def get_disc_word(id):
-    disc = list_disc_for_graf(id)
+def get_disc_word(id, df_disc):
+    disc = list_disc_for_graf(id, df_disc)
     label = ['Dominante', 'Influyente', 'Concienzudo', 'Estable']
     graf = grafico_bar(label, disc, "Perfil")
     return graf
@@ -199,34 +205,34 @@ def grafico_bar(labels, values, title=""):
     plt.close()
     return image_png
 
-def get_grafico_polar_liderazgo_word(id):
-    lider = list_lider_for_graf(id)
+def get_grafico_polar_liderazgo_word(id, df_disc):
+    lider = list_lider_for_graf(id, df_disc)
     label = ['Entusiasmo', 'Integridad', 'Autorenovacion', 'Fortaleza', 'Percepción', 'Criterio', 'Ejecución', 'Audacia', 'Construcción \n de un equipo', 'Colaboración', 'Inspiración', 'Servir a\n los demás']
     graf = grafico_polar_alt(label, lider, "Dimensión del liderazgo")
     return graf
 
 
-def get_grafico_polar_care_word(id):
-    care = list_care_for_graf(id)
+def get_grafico_polar_care_word(id, df_disc):
+    care = list_care_for_graf(id, df_disc)
     label = ['Conceptual', 'Espontáneo', 'Normativo', 'Metódico']
-    perfil_graf = perfil_care_for_graf(id)
-    table_care = list_care_for_tabl(id)
+    perfil_graf = perfil_care_for_graf(id, df_disc)
+    table_care = list_care_for_tabl(id, df_disc)
     graf = grafico_polar_alt(label, care, perfil_graf[0], table_care)
     return graf
 
 
-def get_grafico_polar_liderazgo_render(id):
-    lider = list_lider_for_graf(id)
+def get_grafico_polar_liderazgo_render(id, df_disc):
+    lider = list_lider_for_graf(id, df_disc)
     label = ['Entusiasmo', 'Integridad', 'Autorenovacion', 'Fortaleza', 'Percepción', 'Criterio', 'Ejecución', 'Audacia', 'Construcción \n de un equipo', 'Colaboración', 'Inspiración', 'Servir a \n los demás']
     graf = grafico_polar(label, lider, "Dimensión del liderazgo")
     return graf
 
 
-def get_grafico_polar_care_render(id):
-    care = list_care_for_graf(id)
-    perfil_graf = perfil_care_for_graf(id)
+def get_grafico_polar_care_render(id, df_disc):
+    care = list_care_for_graf(id, df_disc)
+    perfil_graf = perfil_care_for_graf(id, df_disc)
     label = ['Conceptual', 'Espontáneo', 'Normativo', 'Metódico']
-    table_care = list_care_for_tabl(id)
+    table_care = list_care_for_tabl(id, df_disc)
     graf = grafico_polar(label, care, perfil_graf[0], table_care)
     return graf
 
@@ -409,16 +415,159 @@ def grafico_polar(label, values, perfil= "", tabla_value=[], titulo=" "):
     plt.show() """
 
 
-def cargar_dataframe(url):
-
+def cargar_dataframe(url=url3):
+    
     # Se lee la página web, el argumento header=1 indica que el nombre de las columnas está en la segunda fila
     # El encoding="UTF-8" asegura que se reconozca los acentos y la ñ
-    tablas = pd.read_html(url, header=1, encoding="UTF-8")
-    df = tablas[0]
+    """html_content = requests.get(url1).text
+    print(html_content)
+    tablas = pd.read_html(html_content, header=1, encoding="UTF-8")
+    
+    df = tablas[0]"""
+    #df = pd.read_excel(url3)
+    df = pd.read_csv(url4)
+    # Agregar columna con el número de filas empezando desde 0 al comienzo del dataframe
+    df.insert(0, '1', range(len(df)))
+    df.columns = df.columns.str.strip()
+    #df.rename(columns={'Número de Cédula ': 'Número de Cédula'}, inplace=True)
+    
     return df
 
-df_disc = cargar_dataframe(url)
+#df_disc = cargar_dataframe(url)
+def load_disc_data(id):
+    """Loads DISC test data, reordering 'item_' fields and placing 'campo_unico' first."""
+    disc_data = Disc.objects.filter(campo_unico=id).values()
+    df_disc = pd.DataFrame(list(disc_data))
+    if not df_disc.empty:
+        # Identify 'item_' columns and sort them numerically
+        item_cols = sorted([col for col in df_disc.columns if col.startswith('item_')],
+                           key=lambda x: int(x.split('_')[1]))
+        
+        # Define the desired column order
+        #other_cols = [col for col in df_disc.columns if col not in ['campo_unico'] + item_cols]
+        new_order = ['campo_unico'] + ['aplicante_id'] + item_cols 
+        
+        # Filter out columns that don't exist in the DataFrame
+        new_order = [col for col in new_order if col in df_disc.columns]
+        
+        df_disc = df_disc[new_order]
+    return df_disc
 
+def load_teamwork_data(id):
+    """Loads Teamwork test data, placing 'campo_unico' first and then 'item_' fields."""
+    teamwork_data = TrabajoEquipo.objects.filter(campo_unico=id).values()
+    df_teamwork = pd.DataFrame(list(teamwork_data))
+
+    if not df_teamwork.empty:
+        item_cols = [col for col in df_teamwork.columns if col.startswith('item')]
+        #other_cols = [col for col in df_teamwork.columns if col not in ['campo_unico'] + item_cols]
+        new_order = ['campo_unico'] + item_cols 
+        new_order = [col for col in new_order if col in df_teamwork.columns]
+        df_teamwork = df_teamwork[new_order]
+    return df_teamwork
+
+def load_leadership_data(id):
+    """Loads Leadership test data, placing 'campo_unico' first and then 'item_' fields."""
+    leadership_data = Liderazgo.objects.filter(campo_unico=id).values()
+    df_leadership = pd.DataFrame(list(leadership_data))
+
+    if not df_leadership.empty:
+        item_cols = [col for col in df_leadership.columns if col.startswith('item')]
+        #other_cols = [col for col in df_leadership.columns if col not in ['campo_unico'] + item_cols]
+        new_order = ['campo_unico'] + item_cols
+        new_order = [col for col in new_order if col in df_leadership.columns]
+        df_leadership = df_leadership[new_order]
+    return df_leadership
+
+def load_personal_data(id):
+    """Loads all personal data into a DataFrame."""
+    data = DatosPersonales.objects.filter(id=id).values()
+    return pd.DataFrame(list(data))   
+
+
+def carga_disc_db(df):
+    df_dicen = df.iloc[:, 2:]
+    #df_dicen.to_excel("Respuestas Dicen.xlsx")
+    df_pc = calcular_total_dicen(df_dicen)
+    return  df_pc
+
+def carga_care_db(df):
+    df_care = df.iloc[:, 1:]
+    
+    #df_care.to_excel("Respuestas CARE.xlsx")
+    df_pc_care = total_care(df_care)
+    #df_perfil_care = perfil_care(df_pc_care)
+    df_pc_care = df_pc_care.reset_index(drop=True)
+    #df_perfil_care = df_perfil_care.reset_index(drop=True)
+    #df_final_care = pd.concat([df_pc_care, df_perfil_care], axis=1)
+    return df_pc_care
+
+def carga_liderazgo_db(df):
+    df_liderazgo = df.iloc[:, 1:]
+    
+    #df_liderazgo.to_excel("Respuestas liderazgo.xlsx")
+    #df_liderazgo = df_liderazgo.reset_index(drop=True)
+    df_result_liderazgo = liderazgo_total(df_liderazgo, id)
+    df_result_liderazgo_total = liderazgo_orden(df_result_liderazgo)
+    return df_result_liderazgo_total
+
+def carga_general_db(id):
+    df_disc = load_disc_data(id)
+    df_teamwork = load_teamwork_data(id)
+    df_leadership = load_leadership_data(id)
+    aplicante = df_disc.iloc[0,1]
+    df_personal = load_personal_data(aplicante)
+    df_total_disc = carga_disc_db(df_disc)
+    df_total_care = carga_care_db(df_teamwork)
+    df_total_liderazgo = carga_liderazgo_db(df_leadership)
+    #resetar indices
+    df_personal = df_personal.reset_index(drop=True)
+    df_total_disc = df_total_disc.reset_index(drop=True)
+    df_total_care = df_total_care.reset_index(drop=True)
+    df_total_liderazgo = df_total_liderazgo.reset_index(drop=True)
+    df_total = pd.concat([df_personal,df_total_disc, df_total_care, df_total_liderazgo], axis=1)
+    
+    # graficos
+    graf_disc = get_disc_graf(id, df_disc)
+    graf_care = get_grafico_polar_care_render(id, df_teamwork)
+    graf_lider = get_grafico_polar_liderazgo_render(id, df_leadership)
+    care_list = list_care_for_graf(id, df_teamwork)
+    
+    return {
+        'df_total': df_total,
+        'graf_disc': graf_disc,
+        'graf_care': graf_care,
+        'graf_lider': graf_lider,
+        'care_list': care_list
+    }
+
+def carga_general_word_db(id):
+    df_disc = load_disc_data(id)
+    df_teamwork = load_teamwork_data(id)
+    df_leadership = load_leadership_data(id)
+    aplicante = df_disc.iloc[0,1]
+    df_personal = load_personal_data(aplicante)
+    df_total_disc = carga_disc_db(df_disc)
+    df_total_care = carga_care_db(df_teamwork)
+    df_total_liderazgo = carga_liderazgo_db(df_leadership)
+    #resetar indices
+    df_personal = df_personal.reset_index(drop=True)
+    df_total_disc = df_total_disc.reset_index(drop=True)
+    df_total_care = df_total_care.reset_index(drop=True)
+    df_total_liderazgo = df_total_liderazgo.reset_index(drop=True)
+    df_total = pd.concat([df_personal,df_total_disc, df_total_care, df_total_liderazgo], axis=1)
+    
+    # graficos
+    graf_disc = get_disc_graf(id, df_disc)
+    graf_care = get_grafico_polar_care_render(id, df_teamwork)
+    graf_lider = get_grafico_polar_liderazgo_render(id, df_leadership)
+    
+    return {
+        'df_total': df_total,
+        'graf_disc': graf_disc,
+        'graf_care': graf_care,
+        'graf_lider': graf_lider
+    }
 
 def set_dicen(x):
     list_d = []
@@ -551,11 +700,21 @@ def result_dicen_alternativo(valor, baremo, columna_comparar, columna_recuperar)
     return df2
 
 
-def info_test_total(id):
+def info_test_total(id, df_disc):
     #df = cargar_dataframe(url)
-    df_info = df_disc.iloc[[id]]
-    df_temp = df_info.iloc[:, -3]
-    df_info = df_info.iloc[:, :10]
+    #df_disc = cargar_dataframe(url)
+    #df_info = df_disc.iloc[[id]]
+    df_info = df_disc
+    df_temp = df_info.iloc[:, -2]
+    df_info = df_info.iloc[:, :9]
+    #df_info['Fecha'] = df_info['Fecha'].fillna(' ')
+    df_info['Fecha de nacimiento'] = df_info['Fecha de nacimiento'].fillna(' ')
+    
+    # Formatear las fechas al formato dd/mm/yyyy
+    for col in ['Fecha', 'Fecha de nacimiento']:
+        if col in df_info.columns and df_info[col].dtype == 'datetime64[ns]':
+            df_info[col] = df_info[col].dt.strftime('%d/%m/%Y')
+            
     df_info['Edad'] = df_info['Edad'].astype(int)
     df_info = df_info.reset_index(drop=True)
     df_temp = df_temp.reset_index(drop=True)
@@ -563,34 +722,43 @@ def info_test_total(id):
     return df_info_final
 
 
-def df_info_inicial():
+def df_info_inicial(df):
     #df = cargar_dataframe(url)
-    df_info = df_disc.iloc[1:, :10]
-    df_temp = df_disc.iloc[1:, -3]
+    #df_disc = cargar_dataframe(url1)
+    df_info = df.iloc[:, :9]
+    df_temp = df.iloc[:, -2]
     df_info.iloc[:, 0] = df_info.iloc[:, 0].map(int)
     df_info.rename(columns={'1': 'Id'}, inplace=True)
     df_info['Número de Cédula'] = pd.to_numeric(df_info['Número de Cédula'], errors="coerce")
     df_info['Número de Cédula'] = df_info['Número de Cédula'].fillna(0).astype(int)
     df_info['Edad'] = df_info['Edad'].astype(int)
+    # Formatear las fechas al formato dd/mm/yyyy
+    for col in ['Fecha', 'Fecha de nacimiento']:
+        if col in df_info.columns and df_info[col].dtype == 'datetime64[ns]':
+            df_info[col] = df_info[col].dt.strftime('%d/%m/%Y')
+    #df_info['Fecha'] = df_info['Fecha'].fillna(' ')
+    df_info['Fecha de nacimiento'] = df_info['Fecha de nacimiento'].fillna(' ')
     df_info_total = pd.concat([df_info, df_temp], axis=1)
     #df_info = df_info.reset_index(drop=True)
     return df_info_total
 
 
-def carga_inicial_disc(id):
+def carga_inicial_disc(id, df_disc):
     #df = cargar_dataframe(url)
-    df_dicen = df_disc.iloc[[id]]
-    df_dicen = df_dicen.iloc[:, 10:66]
+    #df_disc = cargar_dataframe(url)
+    df_dicen = df_disc
+    df_dicen = df_dicen.iloc[:, 9:65]
     
     #df_dicen.to_excel("Respuestas Dicen.xlsx")
     df_pc = calcular_total_dicen(df_dicen)
     return  df_pc
 
 
-def carga_care(id):
+def carga_care(id, df_disc):
     #df = cargar_dataframe(url)
-    df_care = df_disc.iloc[[id]]
-    df_care = df_care.iloc[:, 66:114]
+    #df_disc = cargar_dataframe(url)
+    df_care = df_disc
+    df_care = df_care.iloc[:, 65:113]
     
     #df_care.to_excel("Respuestas CARE.xlsx")
     df_pc_care = total_care(df_care)
@@ -601,10 +769,11 @@ def carga_care(id):
     return df_pc_care
 
 
-def carga_liderazgo(id):
+def carga_liderazgo(id, df_disc):
     #df = cargar_dataframe(url)
-    df_liderazgo = df_disc.iloc[[id]]
-    df_liderazgo = df_liderazgo.iloc[:, 114:174]
+    #df_disc = cargar_dataframe(url)
+    df_liderazgo = df_disc
+    df_liderazgo = df_liderazgo.iloc[:, 113:173]
     
     #df_liderazgo.to_excel("Respuestas liderazgo.xlsx")
     #df_liderazgo = df_liderazgo.reset_index(drop=True)
@@ -612,43 +781,52 @@ def carga_liderazgo(id):
     df_result_liderazgo_total = liderazgo_orden(df_result_liderazgo)
     return df_result_liderazgo_total
 
-def list_disc_for_graf(id):
-    disc = carga_inicial_disc(id)
+def list_disc_for_graf(id, df_disc):
+    #df_disc = cargar_dataframe(url)
+    #disc = carga_inicial_disc(id, df_disc)
+    disc = carga_disc_db(df_disc)
     total_ = disc.loc[:,['Dominante', 'Influyente', 'Concienzudo', 'Estable']].T
     disc_list_pc = total_[0].values.tolist()
     return disc_list_pc
 
 
-def list_care_for_graf(id):
-    df = carga_care(id)
+def list_care_for_graf(id, df_disc):
+    #df_disc = cargar_dataframe(url)
+    df = carga_care_db(df_disc) 
     df = df.loc[:,['Conceptual', 'Espontáneo', 'Normativo', 'Metódico']].T
     list_care = df[0].values.tolist()
     return list_care
 
 
-def list_lider_for_graf(id):
-    df = carga_liderazgo(id)
+def list_lider_for_graf(id, df_disc):
+    #df_disc = cargar_dataframe(url)
+    df = carga_liderazgo_db(df_disc)
     df = df.loc[:,['Entusiasmo', 'Integridad', 'Autorenovacion', 'Fortaleza', 'Percepción', 'Criterio', 'Ejecución', 'Audacia', 'Construcción de un equipo', 'Colaboración', 'Inspiración', 'Servir a los demás']].T
     list_lider = df[0].values.tolist()
     return list_lider
 
 
-def perfil_care_for_graf(id):
-    df = carga_care(id)
+def perfil_care_for_graf(id, df_disc):
+    #df_disc = cargar_dataframe(url)
+    df = carga_care_db(df_disc)
     perfil = df['Perfil CARE'].values.tolist()
     return perfil
 
-def list_care_for_tabl(id):
-    df = carga_care(id)
+def list_care_for_tabl(id, df_disc):
+    #df_disc = cargar_dataframe(url)
+    df = carga_care_db(df_disc)
     df = df.loc[:,['Conceptualx', 'Espontaneot', 'Normativor', 'Metodicoc']].T
     list_care = df[0].values.tolist()
     return list_care
 
 def carga_total_completo(id):
-    info_total = info_test_total(id)
-    dicen_total = carga_inicial_disc(id)
-    care_total = carga_care(id)
-    liderazgo_total = carga_liderazgo(id)
+    
+    df_disc = cargar_dataframe(url3)
+    df_disc1 = df_disc.iloc[[id]]
+    info_total = info_test_total(id, df_disc1)
+    dicen_total = carga_inicial_disc(id, df_disc1)
+    care_total = carga_care(id, df_disc1)
+    liderazgo_total = carga_liderazgo(id, df_disc1)
     
     #list_liderazgo_pd = liderazgo_orden(liderazgo_total)
     info_total = info_total.reset_index(drop=True)
@@ -821,6 +999,7 @@ def calcular_total_dicen(df):
     df_dicen_total = df_dicen_total.reset_index(drop=True)
     df_pc_disc = df_pc_disc.reset_index(drop=True)
     df_final = pd.concat([df_dicen_total, df_pc_disc, df_det_disc, df_max, df_perfil_disc], axis=1)
+    df_final['Perfil DISC'] = df_final['Patron diferencia'].str.upper()
     return df_final
     # Se unen todos los dataframes
     #df_final = pd.concat([df_info, df_temp, df_dicen, df_dicen_total], axis=1)
@@ -1061,6 +1240,27 @@ print(df_car.loc[:, ['Enfoque CARE', 'Perfil CARE', 'Instinto Rol']])
 gr = get_disc_graf(3)
 
 print(gr)"""
+if __name__ == '__main__':
+    df = load_disc_data('564c90f62b0f416f90f089a0b750fd63')
+    print(df)
+    #url2 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRiCmRH6o75Q4QPrJWxwxrO6AhJnvClFzfJV7cMn-98EPFMDq3CBZUMC3T-tWYfzcBPcLtYzzQP3tbF/pub?output=xlsx"
+    #df = pd.read_csv(url4)
+    #print(df.columns)
+    #df.insert(0, '1', range(len(df)))
+    
+    #df.rename(columns={'Número de Cédula ': 'Número de Cédula'}, inplace=True)
+    #pdf = df_info_inicial(df)
+    #print(pdf.head())
+    # Reemplazar valores NaT en la columna Fecha por string vacío
+    #if 'Fecha' in pdf.columns:
+    """ response = requests.get(url1)
+    html_content = response.content
+    soup = BeautifulSoup(html_content, 'html.parser')
+    table = soup.find('table', {'class': 'waffle'})
+    print(table)
+    df = carga_total_completo(3)
+    tablas = pd.read_html(url1, header=1, encoding="UTF-8")
+    print(tablas[0])"""
 #df.to_excel("salida.xlsx")
 # result=df.apply(lambda x: x.value_counts()).fillna(0)
 #dz = info_test_total(url)

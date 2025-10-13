@@ -1,0 +1,206 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %} Informe Disc {% endblock %}
+{% block css_page %}
+    {% comment %} <script src="{% static 'base/highcharts-8.1.2/highcharts.js' %}"></script>
+    <script src="{% static 'base/highcharts-8.1.2/modules/exporting.js' %}"></script>
+    <script src="{% static 'base/highcharts-8.1.2/modules/export-data.js' %}"></script>
+    <script src="{% static 'base/highcharts-8.1.2/modules/accessibility.js' %}"></script> {% endcomment %}
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+    <style type='text/css'>
+        body{
+            font-family: 'Roboto', sans-serif;
+        }
+        .nuevo-estilo {
+            margin: 15px 0px;
+            background-color: #EFEDF1;
+            border: 1px solid #E2E3E8;
+            padding: 10px 1px;
+        }
+        .estilotabla {
+            border-color: black;
+            border-width: 2px;
+            border-style: solid;
+            font-weight: bold;
+        }
+        .estilotabla2 {
+            border-color: black;
+            border-width: 1px;
+            border-style: solid;
+        }
+        .titulo {
+            font-weight: bold;
+            padding: 10px 1px;
+        }
+        .detalle {
+            padding: 10px 1px;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+<div class="container">
+    
+    <h1 class="text-center">Informe DCL</h1>
+    <h3 class="text-center">Datos Personales</h3>
+    {% with info=df_aplicado %}
+    <br>
+    <a class="btn btn-primary" href="{% url "base:informe_dcl"  info.campo_unico %}" role="button">Descargar word</a>
+    <a class="btn btn-primary" href="{% url "base:informepdfalt_dcl" info.aplicante__nombre info.campo_unico %}" role="button">Descargar pdf</a>
+    {% comment %} <form action="{% url "base:enviomail" %}" method="post" class="d-inline">
+        {% csrf_token %}
+        <input type="hidden" name="user_id" value="{{val_int}}">
+        <input type="hidden" name="name" value="{{info.Nombre_y_Apellido}}">
+        <button type="submit" class="btn btn-danger shadow px-5 py-2">
+        Enviar email
+        </button>
+        {% if messages %}
+            {% for msg in messages %}
+                <div class="alert alert-{{msg.tags}}" role="alert">
+                    {{msg}}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </form> {% endcomment %}
+    <div class="row">
+        <div class="col-3 col-sm-2">Nombre:</div>
+        <div class="col-6">{{info.aplicante__nombre}} {{info.aplicante__apellido}}</div>
+    </div>
+    <div class="row">
+        <div class="col-3 col-sm-2">Fecha de Nacimiento:</div>
+        <div class="col-6">{{info.aplicante__fechaNacimiento|date:"d/m/Y"}}</div>
+    </div>
+    <div class="row">
+        <div class="col-3 col-sm-2">Nacionalidad:</div>
+        <div class="col-6">{{info.aplicante__nacionalidad}}</div>
+    </div>
+    <div class="row">
+        <div class="col-3 col-sm-2">Estado civil:</div>
+        <div class="col-6">{{info.aplicante__estadoCivil}}</div>
+    </div>
+    <h3 class="text-center">Resultados</h3>
+    <div class="row">
+        <div class="col-8 col-sm-8">
+            <table
+                id="table"
+                data-toggle="table"
+                data-locale="es-PY"
+            >
+                <thead>
+                    <th></th>
+                    <th>Dominante</th>
+                    <th>Influyente</th>
+                    <th>Estable</th>
+                    <th>Concienzudo</th>
+                </thead>
+                
+                <tbody>
+                    
+                    <tr>
+                        <td>Desc 1</td>
+                        <td>{{info.item_1}}</td>
+                        <td>{{info.item_2}}</td>
+                        <td>{{info.item_3}}</td>
+                        <td>{{info.item_4}}</td>
+                    </tr>
+                    <tr>
+                        <td>Desc 2</td>
+                        <td>{{info.item_5}}</td>
+                        <td>{{info.item_6}}</td>
+                        <td>{{info.item_7}}</td>
+                        <td>{{info.item_8}}</td>
+                    </tr>
+                    <tr>
+                        <td>Desc 3</td>
+                        <td>{{info.item_9}}</td>
+                        <td>{{info.item_10}}</td>
+                        <td>{{info.item_11}}</td>
+                        <td>{{info.item_12}}</td>
+                    </tr>
+                    <tr>
+                        <td>PC</td>
+                        <td>{{info.item_13}}</td>
+                        <td>{{info.item_14}}</td>
+                        <td>{{info.item_15}}</td>
+                        <td>{{info.item_16}}</td>
+                    </tr>
+                </tbody>
+                
+            </table>
+        </div>
+        <div class="col-4 col-sm-4">
+            <img src="data:image/png;base64,{{ graf_disc|safe }}">
+        </div>
+    </div>
+    
+    <h4 class="text-center">Perfil de personalidad</h4>
+    <h4 class="text-center">{{info.patron}}</h4>
+    <h4 class="">Fortalezas</h4>
+    <div class="row">
+        <div class="col-5 col-sm-3">Emociones:</div>
+        <div class="col-7">{{info.emociones}}</div>
+    </div>
+    <div class="row">
+        <div class="col-5 col-sm-3">Meta:</div>
+        <div class="col-7">{{info.meta}}</div>
+    </div>
+    <div class="row">
+        <div class="col-5 col-sm-3">Juzga a los demás por:</div>
+        <div class="col-7">{{info.juzga}}</div>
+    </div>
+    <div class="row">
+        <div class="col-5 col-sm-3">Influye en los demás mediante:</div>
+        <div class="col-7">{{info.influye}}</div>
+    </div>
+    <div class="row">
+        <div class="col-5 col-sm-3">Su valor para la organización:</div>
+        <div class="col-7">{{info.valor_organizacion}}</div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-12 col-sm-12">{{info.anadido}}</div>
+    </div>
+    <br>
+    <h4 class="">Debilidades</h4>
+    <div class="row">
+        <div class="col-5 col-sm-3">Abusa:</div>
+        <div class="col-7">{{info.abusa}}</div>
+    </div>
+    <div class="row">
+        <div class="col-5 col-sm-3">Bajo presión:</div>
+        <div class="col-7 col-sm-9">{{info.bajo_presion}}</div>
+    </div>
+    <div class="row">
+        <div class="col-5 col-sm-3">Teme:</div>
+        <div class="col-7 col-sm-9">{{info.teme}}</div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-12 col-sm-12">{{info.observaciones}}</div>
+    </div>
+    <br>
+    <h4 class="">Sugerencias</h4>
+    <br>
+    <div class="row">
+        <div class="col-12 col-sm-12">{{info.sugerencias}}</div>
+    </div>
+    <br>
+    <br>
+    <div class="row">
+        <div class="col-12 col-sm-12">{{info.enfasis}}</div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-6 col-sm-6">Descripción</div>
+{% endwith %}
+</div>
+{% endblock %}
+{% block js_page %} 
+
+{% endblock %}

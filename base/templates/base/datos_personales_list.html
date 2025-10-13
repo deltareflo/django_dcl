@@ -1,0 +1,75 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Lista de Datos Personales</h4>
+                    <form method="GET" class="form-inline mb-3">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control" placeholder="Buscar por nombre, apellido, cédula o email" value="{{ query }}">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">Buscar</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Cédula</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Fecha de Nacimiento</th>
+                                    <th>Edad</th>
+                                    <th>Nacionalidad</th>
+                                    <th>Estado Civil</th>
+                                    <th>Email</th>
+                                    <th>Celular</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for dato in datos_personales %}
+                                <tr>
+                                    <td>{{ dato.cedula }}</td>
+                                    <td>{{ dato.nombre }}</td>
+                                    <td>{{ dato.apellido }}</td>
+                                    <td>{{ dato.fechaNacimiento }}</td>
+                                    <td>{{ dato.edad }}</td>
+                                    <td>{{ dato.nacionalidad }}</td>
+                                    <td>{{ dato.estadoCivil }}</td>
+                                    <td>{{ dato.email }}</td>
+                                    <td>{{ dato.celular }}</td>
+                                    <td>
+                                        <a href="{% url 'base:datos_personales_update' dato.pk %}" class="btn btn-sm btn-info">Editar</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="10">No hay datos personales registrados.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <nav>
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Anterior</a></li>
+                            {% endif %}
+                            <li class="page-item active"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
+                            {% if page_obj.has_next %}
+                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Siguiente</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

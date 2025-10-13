@@ -1,59 +1,28 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-{% block title %} Informe Disc {% endblock %}
 {% block css_page %}
-    {% comment %} <script src="{% static 'base/highcharts-8.1.2/highcharts.js' %}"></script>
-    <script src="{% static 'base/highcharts-8.1.2/modules/exporting.js' %}"></script>
-    <script src="{% static 'base/highcharts-8.1.2/modules/export-data.js' %}"></script>
-    <script src="{% static 'base/highcharts-8.1.2/modules/accessibility.js' %}"></script> {% endcomment %}
+<style>
+    .container {
+        max-width: 960px;
+    }
 
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/highcharts-more.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-
-    <style type='text/css'>
-        body{
-            font-family: 'Roboto', sans-serif;
-        }
-        .nuevo-estilo {
-            margin: 15px 0px;
-            background-color: #EFEDF1;
-            border: 1px solid #E2E3E8;
-            padding: 10px 1px;
-        }
-        .estilotabla {
-            border-color: black;
-            border-width: 2px;
-            border-style: solid;
-            font-weight: bold;
-        }
-        .estilotabla2 {
-            border-color: black;
-            border-width: 1px;
-            border-style: solid;
-        }
-        .titulo {
-            font-weight: bold;
-            padding: 10px 1px;
-        }
-        .detalle {
-            padding: 10px 1px;
-        }
-    </style>
+    .lh-condensed {
+        line-height: 1.25;
+    }
+</style>
 {% endblock %}
+
 {% block body %}
 <div class="container">
     
     <h1 class="text-center">Informe DCL</h1>
     <h3 class="text-center">Datos Personales</h3>
-    {% for info in dict_total %}
+    {% with info=df_aplicado %}
     <br>
-    <a class="btn btn-primary" href="{% url "base:informe_dcl"  val_int %}" role="button">Descargar word</a>
-    <a class="btn btn-primary" href="{% url "base:informepdfalt_dcl" nombre val_int %}" role="button">Descargar pdf</a>
-    {% comment %} <form action="{% url "base:enviomail" %}" method="post" class="d-inline">
+    <a class="btn btn-primary" href="{% url "base:informe_dcl_word"  campo_unico %}" role="button">Descargar word</a>
+    {% comment %}<a class="btn btn-primary" href="{% url "base:informepdfalt_dcl" info.aplicante__nombre info.campo_unico %}" role="button">Descargar pdf</a>
+     <form action="{% url "base:enviomail" %}" method="post" class="d-inline">
         {% csrf_token %}
         <input type="hidden" name="user_id" value="{{val_int}}">
         <input type="hidden" name="name" value="{{info.Nombre_y_Apellido}}">
@@ -70,19 +39,19 @@
     </form> {% endcomment %}
     <div class="row">
         <div class="col-3 col-sm-2">Nombre:</div>
-        <div class="col-6">{{info.Nombre_y_Apellido}}</div>
+        <div class="col-6">{{info.nombre}} {{info.apellido}}</div>
     </div>
     <div class="row">
         <div class="col-3 col-sm-2">Fecha de Nacimiento:</div>
-        <div class="col-6">{{info.Fecha_de_nacimiento}}</div>
+        <div class="col-6">{{info.fechaNacimiento|date:"d/m/Y"}}</div>
     </div>
     <div class="row">
         <div class="col-3 col-sm-2">Nacionalidad:</div>
-        <div class="col-6">{{info.Nacionalidad}}</div>
+        <div class="col-6">{{info.nacionalidad}}</div>
     </div>
     <div class="row">
         <div class="col-3 col-sm-2">Estado civil:</div>
-        <div class="col-6">{{info.Estado_civil}}</div>
+        <div class="col-6">{{info.estadoCivil}}</div>
     </div>
     <h3 class="text-center">Resultados</h3>
     <div class="row">
@@ -140,7 +109,7 @@
     </div>
     
     <h4 class="text-center">Perfil de personalidad</h4>
-    <h4 class="text-center">{{info.Patron_diferencia}}</h4>
+    <h4 class="text-center">{{info.Patron}}</h4>
     <h4 class="">Fortalezas</h4>
     <div class="row">
         <div class="col-5 col-sm-3">Emociones:</div>
@@ -514,7 +483,7 @@
     </div>
     {% endif %}
 
-    {% endfor %}
+{% endwith %}
 </div>
 {% endblock %}
 {% block js_page %} 

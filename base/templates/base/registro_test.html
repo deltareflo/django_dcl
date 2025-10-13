@@ -1,0 +1,310 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block title %} Formulario Test {% endblock %}
+
+{% block css_page %}
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-section {
+        margin-bottom: 30px;
+    }
+    
+    .form-title {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #3498db;
+        text-align: center; /* Centrar el título */
+    }
+    
+    .item-container {
+        display: none;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        text-align: center; /* Centrar el contenido */
+    }
+    
+    .item-container.active {
+        display: block;
+        animation: fadeIn 0.5s;
+    }
+    
+    .item-pair {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        align-items: center; /* Centrar los elementos horizontalmente */
+    }
+    
+    .item {
+        margin-bottom: 15px;
+        text-align: center; /* Centrar el contenido del ítem */
+    }
+    
+    .item-title {
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #2c3e50;
+        text-align: center; /* Centrar el título del ítem */
+    }
+    
+    .options-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin: 0 auto; /* Centrar el contenedor */
+        max-width: 600px; /* Ancho máximo para mejor apariencia */
+    }
+    
+    .options-container-lider {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin: 0 auto; /* Centrar el contenedor */
+        max-width: 600px; /* Ancho máximo para mejor apariencia */
+    }
+    
+    /* Estilos responsivos para CARE y Liderazgo */
+    @media (max-width: 767px) {
+        /* Una sola columna en móviles */
+        .options-container,
+        .options-container-lider {
+            grid-template-columns: 1fr;
+        }
+        
+        /* Asegura que cada form-group ocupe toda la fila en móviles */
+        .options-container .form-group,
+        .options-container-lider .form-group {
+            grid-column: 1 / -1;
+            width: 100%;
+            margin-right: 0;
+        }
+    }
+    
+    @media (min-width: 768px) {
+        /* Dos columnas en tablets/PC para options-container */
+        .options-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        /* Ajuste para que los form-group se muestren dos por fila y centrados */
+        .options-container .form-group,
+        .options-container-lider .form-group {
+            display: flex;
+            width: 200px; /* Ancho fijo */
+            margin-left: auto; /* Alinea a la derecha dentro del contenedor */
+            margin-right: 0;
+            vertical-align: top;
+            justify-content: space-between; /* Alinea el contenido a la derecha */
+        }
+
+        .options-container .form-group label,
+        .options-container-lider .form-group label {
+            text-align: left; /* Justificar el label a la izquierda */
+            flex-grow: 1; /* Permite que el label ocupe el espacio disponible */
+        }
+
+        .options-container .form-group .form-control,
+        .options-container-lider .form-group .form-control {
+            width: 100px; /* Tamaño fijo para el select */
+            flex-shrink: 0; /* Evita que el select se encoja */
+            text-align: left; /* Alinea el texto del select a la derecha */
+        }
+        
+        .options-container .form-group:nth-child(2n),
+        .options-container-lider .form-group:nth-child(2n) {
+            margin-right: 0;
+        }
+        
+        /* Contenedor para centrar los form-group */
+        .options-container,
+        .options-container-lider {
+            text-align: center;
+        }
+    }
+
+    .option-item {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .option-item:hover {
+        background-color: #f1f1f1;
+    }
+    
+    .option-item.selected {
+        background-color: #3498db;
+        color: white;
+        border-color: #3498db;
+    }
+    
+    .option-item.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background-color: #f5f5f5;
+    }
+    
+    /* Estilo base para opciones deshabilitadas en selects de CARE y Liderazgo */
+    .form-control.care-select.form-control-alt option:disabled,
+    .form-control.liderazgo-select.form-control-alt option:disabled {
+        background-color: #ffcccc !important; /* Fondo rojo claro */
+        color: #333 !important; /* Color de texto más oscuro para mejor contraste */
+    }
+    
+    /* Clase para aplicar a los selects cuando se quiere mostrar el estilo de opciones deshabilitadas */
+    .highlight-disabled-options option:disabled {
+        background-color: #ffcccc !important;
+        color: #333 !important;
+    }
+    
+    /* Clase para opciones que deben aparecer como deshabilitadas */
+    .custom-disabled-option {
+        background-color: #ffcccc !important;
+        color: #333 !important;
+        opacity: 0.7;
+    }
+    
+    .navigation-buttons {
+        display: flex;
+        justify-content: center; /* Centrar los botones */
+        gap: 20px; /* Espacio entre botones */
+        margin-top: 20px;
+    }
+    
+    .btn-navigation {
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .progress-container {
+        margin-bottom: 20px;
+    }
+    
+    .progress-bar {
+        height: 8px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background-color: #3498db;
+        width: 0%;
+        transition: width 0.3s ease;
+    }
+    
+    .progress-text {
+        text-align: center;
+        margin-top: 5px;
+        font-size: 14px;
+        color: #6c757d;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .required-field {
+        color: red;
+    }
+    
+    .form-control:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+    }
+    .form-group-alt {
+        align-items: center;
+        display: flex;
+        justify-content: center; /* Centrar horizontalmente */
+    }
+    
+    /* Centrar los selects en las secciones CARE y Liderazgo */
+    .form-control.liderazgo-select.form-control-alt,
+    .form-control.care-select.form-control-alt {
+        width: 30%;
+        margin: 0 auto; /* Centrar el control */
+        display: block; /* Asegurar que se comporte como bloque para el centrado */
+    }
+    
+    /* Centrar los labels dentro de form-group */
+    .options-container .form-group label,
+    .options-container-lider .form-group label {
+        display: block;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    .error-message {
+        color: red;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
+{% block content %}{% endblock %}
+{% block header %}{% endblock %}
+{% block navigation %}{% endblock %}
+{% block login %}
+<div class="pcoded-content">
+    <div class="pcoded-inner-content">
+        <div class="main-body">
+            <div class="page-wrapper">
+                <div class="page-header">
+                    <div class="row align-items-end">
+                        <div class="col-lg-12">
+                            <div class="page-header-title">
+                                <div class="d-inline">
+                                    <div class="row">
+                                        <div class="col-12 col-sm-12 text-center img-logo">
+                                            <img src='{% static "base/images/logochaco.svg" %}' alt="" class="logo images">
+                                        </div>
+                                    </div>
+                                    <h4 class="text-center title-form">Recursos Humanos</h4>
+                                    <h5 class="text-center">Se han registrado con éxito sus respuestas. Muchas gracias</h5>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="pcoded-footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="pcoded-footer-content">
+                        <p class="m-b-0">2023 © Chacomer. <a href="https://www.chacomer.com/">www.chacomer.com</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
+
+
+
+
